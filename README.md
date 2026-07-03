@@ -22,6 +22,9 @@ Maths-main/
 
 
 ## How to Run
-cd math-hint-chatbot
-python train_model.py
+Frontend streamlit run app_ui.py Terminal 2
+.\venv\Scripts\activate
+python -m streamlit run app_ui.py
+
+Backend python app.pyTerminal 1
 python app.py
