@@ -22,9 +22,8 @@ Maths-main/
 text## How to Run
 
 ### Backend (Terminal 1)
-```bash
 cd math-hint-chatbot
 python app.py
 Frontend (Terminal 2)
-Bashcd math-hint-chatbot
+cd math-hint-chatbot
 streamlit run app_ui.py
