@@ -25,3 +25,7 @@ Maths-main/
 cd math-hint-chatbot
 python train_model.py
 python app.py
+
+
+.\venv\Scripts\activate
+streamlit run app_ui.py
