@@ -3,7 +3,8 @@ from hint_engine import HintEngine
 from scan_api import register_scan_api
 from graph_engine import GraphEngine
 from graph_api import register_graph_api 
-
+from revision_engine import RevisionEngine
+from revision_api import register_revision_api
 
 
 
@@ -29,10 +30,12 @@ def add_cors_headers(response):
 
 print("🚀 Loading Hint Engine...")
 engine = HintEngine(csv_path='data/maths_only.csv')
+revision_engine = RevisionEngine()
 print("✅ Engine ready!")
 
 # Register Scan API
 register_scan_api(app, engine)
+register_revision_api(app, revision_engine)
 
 
 @app.route("/", methods=["GET"])
