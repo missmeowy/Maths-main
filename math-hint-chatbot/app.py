@@ -1,13 +1,19 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 from hint_engine import HintEngine
- 
+from scan_api import register_scan_api 
 app = Flask(__name__)
-CORS(app)
- 
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+
 print("🚀 Loading Hint Engine...")
 engine = HintEngine(csv_path='data/maths_only.csv')
 print("✅ Engine ready!")
+register_scan_api(app, engine)
  
 session_hints = {}
  
@@ -95,6 +101,42 @@ def next_hint():
 def get_topics():
     topics = engine.df['topic'].dropna().unique().tolist()
     return jsonify({"topics": topics})
- 
+
+@app.route('/graph', methods=['POST'])
+def graph():
+    data = request.get_json()
+
+    if not data or 'equation' not in data:
+        return jsonify({
+            "status": "error",
+            "message": "Equation is required."
+        }), 400
+
+    equation = data["equation"].strip()
+
+    if equation == "":
+        return jsonify({
+            "status": "error",
+            "message": "Equation cannot be empty."
+        }), 400
+
+    result = engine.get_hint(equation)
+
+    if not result["found"]:
+        return jsonify({
+            "status": "not_found",
+            "message": "No similar mathematical function found.",
+            "equation": equation
+        })
+
+    return jsonify({
+        "status": "success",
+        "equation": equation,
+        "matched_question": result["matched_question"],
+        "topic": result["topic"],
+        "confidence": f"{round(result['score']*100,1)}%",
+        "hints": result["hints"]
+    })
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
